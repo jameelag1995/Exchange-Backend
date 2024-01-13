@@ -5,16 +5,8 @@ const productSchema = mongoose.Schema(
         type: {
             type: String,
             required: true,
-            validate: {
-                validator: function (value) {
-                    if (value !== "Goods" || value !== "Services") {
-                        throw new Error(
-                            "Product type can be goods or services"
-                        );
-                    }
-                    return value;
-                },
-            },
+            enum: ["Goods", "Services"],
+            default: "Goods",
         },
         category: {
             type: String,
