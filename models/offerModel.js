@@ -13,18 +13,22 @@ const offerSchema = mongoose.Schema(
         description: {
             type: String,
         },
-        offeredProducts: [
+        receiverProducts: [
             {
                 type: mongoose.Schema.Types.ObjectId,
                 ref: "Products",
             },
         ],
-        desiredProduct: [
+        senderProducts: [
             {
                 type: mongoose.Schema.Types.ObjectId,
                 ref: "Products",
             },
         ],
+        status: {
+            type: String,
+            enum: ["Pending", "Accepted", "Rejected"],
+        },
     },
     {
         timestamps: true,

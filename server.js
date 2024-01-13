@@ -3,6 +3,7 @@ import cors from "cors";
 import express from "express";
 import { connectDB } from "./config/dbConnection.js";
 import { errorHandler } from "./middleware/errorHandler.js";
+import userRouter from "./routes/user.routes.js";
 dotenv.config();
 
 const app = express();
@@ -14,7 +15,7 @@ app.use(cors());
 app.use(express.json());
 
 // routes
-app.use('/api/v1/exchange')
+app.use("/api/v1/exchange", userRouter);
 
 // error handler middleware
 app.use(errorHandler);
@@ -22,6 +23,6 @@ app.use(errorHandler);
 const PORT = process.env.PORT || 4545;
 connectDB().then(() => {
     app.listen(PORT, () => {
-        console.log("Server is listening on port" + PORT);
+        console.log("Server is listening on port " + PORT);
     });
 });

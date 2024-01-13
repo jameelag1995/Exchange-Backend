@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-
+import jwt from "jsonwebtoken";
 const userSchema = mongoose.Schema(
     {
         displayName: {
@@ -55,11 +55,33 @@ const userSchema = mongoose.Schema(
                 ref: "Transaction",
             },
         ],
+        tokens: [
+            {
+                token: {
+                    type: String,
+                    required: true,
+                },
+            },
+        ],
     },
     {
         timestamps: true,
     }
 );
+
+userSchema.methods.generateAccessToken = async function () {
+    const currUser = this;
+    const token = jwt.sign(
+        {
+            _id: currUser._id.toString(),
+        },
+        process.env.ACCESS_TOKEN_SECRET
+    );
+
+    currUser.tokens = currUser.tokens.concat({ token });
+    await currUser.save();
+    return token;
+};
 
 const User = mongoose.model("Users", userSchema);
 
