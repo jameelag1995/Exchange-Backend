@@ -118,7 +118,7 @@ export const logout = async (req, res, next) => {
             (token) => token.token != req.token
         );
         await req.user.save();
-        res.send(req.user);
+        res.send("logged out");
     } catch (error) {
         next(error);
     }
@@ -131,7 +131,7 @@ export const logoutAll = async (req, res, next) => {
     try {
         req.user.tokens = [];
         await req.user.save();
-        res.send(req.user);
+        res.send("logged out from all devices");
     } catch (error) {
         next(error);
     }
