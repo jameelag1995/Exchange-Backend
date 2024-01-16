@@ -5,6 +5,7 @@ const errorHandler = (err, req, res, next) => {
         ? res.statusCode
         : STATUS_CODES.SERVER_ERROR;
     res.status(statusCode);
+    
     switch (statusCode) {
         case STATUS_CODES.VALIDATION_ERROR:
             res.json({

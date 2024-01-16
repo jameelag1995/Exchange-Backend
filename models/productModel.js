@@ -13,9 +13,12 @@ const productSchema = mongoose.Schema(
             default: "other",
             required: true,
         },
-        canBeTradedFor: {
-            type: [String],
-        },
+        canBeTradedFor: [
+            {
+                type: String,
+                required: true,
+            },
+        ],
         title: {
             type: String,
             required: true,
@@ -26,6 +29,11 @@ const productSchema = mongoose.Schema(
         },
         estimatedValue: {
             type: Number,
+            min: [0, "Estimated Value Must Be a Positive Number"],
+            required: true,
+        },
+        color: {
+            type: String,
         },
         pictures: {
             type: [String],
