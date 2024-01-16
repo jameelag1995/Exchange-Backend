@@ -106,7 +106,7 @@ export const updateProduct = async (req, res, next) => {
         );
         if (!product) {
             res.status(STATUS_CODES.NOT_FOUND);
-            throw new Error("No Such Product");
+            throw new Error("No Such Product or Not Authorized ");
         }
 
         req.user.save();
