@@ -12,11 +12,11 @@ import {
 
 const router = express.Router();
 
-router.get("/users", validateToken, getAllUsers);
-router.post("/users/register", registerUser);
-router.post("/users/login", loginUser);
-router.patch("/users/update", validateToken, updateUser);
-router.get("/users/me", validateToken, currentUser);
-router.put("/users/logoutAll", validateToken, logoutAll);
-router.put("/users/logout", validateToken, logout);
+router.get("/", validateToken, getAllUsers);
+router.post("/register", registerUser);
+router.post("/login", loginUser);
+router.patch("/update", validateToken, updateUser);
+router.get("/me", validateToken, currentUser);
+router.put("/logoutAll", validateToken, logoutAll);
+router.put("/logout", validateToken, logout);
 export default router;

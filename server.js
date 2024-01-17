@@ -15,9 +15,11 @@ app.use(cors());
 // json parse middleware
 app.use(express.json());
 
-// routes
-app.use("/api/v1/exchange", userRouter);
-app.use("/api/v1/exchange", productRouter);
+/* --------------------------------- routes --------------------------------- */
+// User routes
+app.use("/api/v1/exchange/users", userRouter);
+// product routes
+app.use("/api/v1/exchange/products", productRouter);
 
 // error handler middleware
 app.use(errorHandler);

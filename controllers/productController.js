@@ -54,6 +54,22 @@ export const getProduct = async (req, res, next) => {
     }
 };
 
+//@desc Get all products
+//@route GET /api/products/myProducts
+//@access private
+export const getAllMyProducts = async (req, res, next) => {
+    try {
+        if (!req.user.products.length) {
+            res.status(STATUS_CODES.NOT_FOUND);
+            throw new Error("You didn't add any products of your own yet");
+        }
+
+        res.send(req.user.products);
+    } catch (error) {
+        next(error);
+    }
+};
+
 //@desc Remove a product
 //@route DELETE /api/products/:productId
 //@access private
@@ -99,8 +115,9 @@ export const updateProduct = async (req, res, next) => {
             {
                 _id: productId,
                 currentOwner: req.user._id,
-            },{
-                ...req.body
+            },
+            {
+                ...req.body,
             },
             { new: true }
         );

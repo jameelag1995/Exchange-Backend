@@ -1,6 +1,7 @@
 import express from "express";
 import {
     createProduct,
+    getAllMyProducts,
     getProduct,
     removeProduct,
     updateProduct,
@@ -9,8 +10,9 @@ import { validateToken } from "../middleware/validateTokenHandler.js";
 
 const router = express.Router();
 
-router.post("/products/create", validateToken, createProduct);
-router.get("/products/:productId", validateToken, getProduct);
-router.delete("/products/:productId", validateToken, removeProduct);
-router.put("/products/:productId", validateToken, updateProduct);
+router.post("/create", validateToken, createProduct);
+router.get("/myProducts", validateToken, getAllMyProducts);
+router.get("/:productId", validateToken, getProduct);
+router.delete("/:productId", validateToken, removeProduct);
+router.put("/:productId", validateToken, updateProduct);
 export default router;
