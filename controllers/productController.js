@@ -1,6 +1,6 @@
 import { STATUS_CODES } from "../constants/constants.js";
 import Product from "../models/productModel.js";
-
+import sharp from "sharp";
 //@desc Create a product
 //@route POST /api/products/create
 //@access private
@@ -22,12 +22,28 @@ export const createProduct = async (req, res, next) => {
                 "Must include title, description, estimated value and items that can be traded for"
             );
         }
-        const product = await Product.create(req.body);
+
+        const product = new Product(req.body);
         product.currentOwner = req.user._id;
+        if (req.body.pictures) product.pictures = pictures.split(",");
+        if (req.body.canBeTradedFor)
+            product.canBeTradedFor = canBeTradedFor.split(",");
         await product.save();
         req.user.products.push(product);
         await req.user.save();
         res.status(STATUS_CODES.CREATED).send(product);
+    } catch (error) {
+        next(error);
+    }
+};
+
+//@desc get all products
+//@route GET /api/products
+//@access private
+export const getAllProducts = async (req, res, next) => {
+    try {
+        const products = await Product.find();
+        res.send(products);
     } catch (error) {
         next(error);
     }
@@ -54,7 +70,7 @@ export const getProduct = async (req, res, next) => {
     }
 };
 
-//@desc Get all products
+//@desc Get all user products
 //@route GET /api/products/myProducts
 //@access private
 export const getAllMyProducts = async (req, res, next) => {
@@ -63,7 +79,6 @@ export const getAllMyProducts = async (req, res, next) => {
             res.status(STATUS_CODES.NOT_FOUND);
             throw new Error("You didn't add any products of your own yet");
         }
-
         res.send(req.user.products);
     } catch (error) {
         next(error);
@@ -124,6 +139,14 @@ export const updateProduct = async (req, res, next) => {
         if (!product) {
             res.status(STATUS_CODES.NOT_FOUND);
             throw new Error("No Such Product or Not Authorized ");
+        }
+        if (req.body.pictures) {
+            product.pictures = req.body?.pictures.split(",");
+        }
+        console.log(req.body.canBeTradedFor);
+        if (req.body.canBeTradedFor) {
+            product.canBeTradedFor = req.body?.canBeTradedFor.split(",");
+            console.log(product.canBeTradedFor);
         }
 
         req.user.save();

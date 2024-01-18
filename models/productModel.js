@@ -5,7 +5,7 @@ const productSchema = mongoose.Schema(
         type: {
             type: String,
             required: true,
-            enum: ["Goods", "Services"],
+            enum: ["Goods", "Service"],
             default: "Goods",
         },
         category: {
@@ -13,12 +13,10 @@ const productSchema = mongoose.Schema(
             default: "other",
             required: true,
         },
-        canBeTradedFor: [
-            {
-                type: String,
-                required: true,
-            },
-        ],
+        canBeTradedFor: {
+            type: [String],
+            required: true,
+        },
         title: {
             type: String,
             required: true,
