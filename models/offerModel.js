@@ -10,9 +10,12 @@ const offerSchema = mongoose.Schema(
             type: mongoose.Schema.Types.ObjectId,
             ref: "Users",
         },
-        description: {
-            type: String,
-        },
+        conversation: [
+            {
+                sender: { type: String },
+                content: { type: String },
+            },
+        ],
         receiverProducts: [
             {
                 type: mongoose.Schema.Types.ObjectId,
@@ -25,11 +28,19 @@ const offerSchema = mongoose.Schema(
                 ref: "Products",
             },
         ],
-        status: {
-            type: String,
-            enum: ["Pending", "Accepted", "Rejected"],
-            default: "Pending",
-        },
+        status: [
+            {
+                userId: {
+                    type: mongoose.Schema.Types.ObjectId,
+                    ref: "Users",
+                },
+                status: {
+                    type: String,
+                    enum: ["Pending", "Accepted", "Rejected"],
+                    default: "Pending",
+                },
+            },
+        ],
     },
     {
         timestamps: true,

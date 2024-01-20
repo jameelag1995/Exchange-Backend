@@ -5,6 +5,7 @@ import { connectDB } from "./config/dbConnection.js";
 import { errorHandler } from "./middleware/errorHandler.js";
 import userRouter from "./routes/user.routes.js";
 import productRouter from "./routes/product.routes.js";
+import offerRouter from "./routes/offer.routes.js";
 dotenv.config();
 
 const app = express();
@@ -20,6 +21,8 @@ app.use(express.json());
 app.use("/api/v1/exchange/users", userRouter);
 // product routes
 app.use("/api/v1/exchange/products", productRouter);
+// offer routes
+app.use("/api/v1/exchange/offers", offerRouter);
 
 // error handler middleware
 app.use(errorHandler);
