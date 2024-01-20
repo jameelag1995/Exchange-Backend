@@ -42,7 +42,20 @@ export const createProduct = async (req, res, next) => {
 //@access private
 export const getAllProducts = async (req, res, next) => {
     try {
-        const products = await Product.find();
+        const products = await Product.find().populate("currentOwner");
+        res.send(products);
+    } catch (error) {
+        next(error);
+    }
+};
+
+//@desc get all products by user Id
+//@route GET /api/products/by-userId/:userId
+//@access private
+export const getAllProductsByUserId = async (req, res, next) => {
+    try {
+        const userId = req.params.userId;
+        const products = await Product.find({ currentOwner: userId });
         res.send(products);
     } catch (error) {
         next(error);
@@ -59,7 +72,9 @@ export const getProduct = async (req, res, next) => {
             res.status(STATUS_CODES.VALIDATION_ERROR);
             throw new Error("Must Provide Product ID");
         }
-        const product = await Product.findById(productId);
+        const product = await Product.findById(productId).populate(
+            "currentOwner"
+        );
         if (!product) {
             res.status(STATUS_CODES.NOT_FOUND);
             throw new Error("No Such Product");
@@ -100,7 +115,6 @@ export const removeProduct = async (req, res, next) => {
             res.status(STATUS_CODES.NOT_FOUND);
             throw new Error("No Such Product");
         }
-        console.log(product.currentOwner._id.equals(req.user._id));
         if (!product.currentOwner._id.equals(req.user._id)) {
             res.status(STATUS_CODES.FORBIDDEN);
             throw new Error("You are not authorized to remove this item");
@@ -143,14 +157,33 @@ export const updateProduct = async (req, res, next) => {
         if (req.body.pictures) {
             product.pictures = req.body?.pictures.split(",");
         }
-        console.log(req.body.canBeTradedFor);
         if (req.body.canBeTradedFor) {
             product.canBeTradedFor = req.body?.canBeTradedFor.split(",");
-            console.log(product.canBeTradedFor);
         }
 
         req.user.save();
         res.send({ product, user: req.user });
+    } catch (error) {
+        next(error);
+    }
+};
+
+//@desc Search for products by title
+//@route GET /api/products/search/by
+//@access private
+export const searchProducts = async (req, res, next) => {
+    try {
+        const searchQuery = req.query.searchQuery;
+        const products = await Product.find();
+        const filteredProducts = products.filter(
+            (product) =>
+                product.title.includes(searchQuery) ||
+                product.description.includes(searchQuery) ||
+                product.canBeTradedFor.includes(searchQuery) ||
+                product.category.includes(searchQuery) ||
+                product.color.includes(searchQuery)
+        );
+        res.send(filteredProducts);
     } catch (error) {
         next(error);
     }

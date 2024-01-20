@@ -33,7 +33,7 @@ export const registerUser = async (req, res, next) => {
 
         // Hash password
         const hashedPassword = await bcrypt.hash(password, 10);
-        console.log("Hashed Password: ", hashedPassword);
+
         const user = await User.create({
             displayName,
             email,
@@ -42,7 +42,6 @@ export const registerUser = async (req, res, next) => {
 
         if (user) {
             const accessToken = await user.generateAccessToken();
-            console.log("user created with token: ", user);
             res.status(STATUS_CODES.CREATED).json({
                 accessToken,
             });
@@ -83,7 +82,6 @@ export const loginUser = async (req, res, next) => {
 //@access private
 export const updateUser = async (req, res, next) => {
     try {
-        console.log(req.body);
         if (Object.keys(req.body).length === 0) {
             res.status(STATUS_CODES.VALIDATION_ERROR);
             throw new Error("Must provide request body");
