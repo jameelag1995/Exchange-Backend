@@ -1,5 +1,6 @@
 import { STATUS_CODES } from "../constants/constants.js";
 import Offer from "../models/offerModel.js";
+import User from "../models/userModel.js";
 
 //@desc get an offer by id
 //@route GET /api/offers/:offerId
@@ -70,7 +71,6 @@ export const updateOffer = async (req, res, next) => {
             );
         }
 
-
         const offer = await Offer.findByIdAndUpdate(offerId, req.body, {
             new: true,
         }).populate("sender receiver receiverProducts senderProducts");
@@ -78,8 +78,23 @@ export const updateOffer = async (req, res, next) => {
             res.send(STATUS_CODES.NOT_FOUND);
             throw new Error("No Such Offer");
         }
-        if(completed !== undefined){
-            
+        if (completed !== undefined) {
+            if (completed) {
+                const sender = await User.findById(offer.sender._id);
+                const newSenderProducts = sender.products.filter((prod) =>
+                    senderProducts.some((soldProd) => soldProd._id !== prod._id)
+                );
+                sender.products = newSenderProducts.concat(receiverProducts);
+                await sender.save();
+                const receiver = await User.findById(offer.receiver._id);
+                const newReceiverProducts = receiver.products.filter((prod) =>
+                    receiverProducts.some(
+                        (soldProd) => soldProd._id !== prod._id
+                    )
+                );
+                receiver.products = newReceiverProducts.concat(senderProducts);
+                await receiver.save();
+            }
         }
         res.send(offer);
     } catch (error) {
