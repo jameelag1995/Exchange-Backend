@@ -41,6 +41,9 @@ const offerSchema = mongoose.Schema(
                 },
             },
         ],
+        completed: {
+            type: Boolean,
+        },
     },
     {
         timestamps: true,
