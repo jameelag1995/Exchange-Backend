@@ -13,6 +13,11 @@ const productSchema = mongoose.Schema(
             default: "other",
             required: true,
         },
+        subCategory: {
+            type: String,
+            default: "other",
+            required: true,
+        },
         canBeTradedFor: {
             type: [String],
             required: true,

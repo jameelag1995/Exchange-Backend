@@ -1,7 +1,6 @@
 import User from "../models/userModel.js";
 import { STATUS_CODES } from "../constants/constants.js";
 import bcrypt from "bcrypt";
-import jwt from "jsonwebtoken";
 
 // @desc
 // @route

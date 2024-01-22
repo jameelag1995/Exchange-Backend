@@ -43,12 +43,6 @@ const userSchema = mongoose.Schema(
                 ref: "Reviews",
             },
         ],
-        products: [
-            {
-                type: mongoose.Schema.Types.ObjectId,
-                ref: "Products",
-            },
-        ],
         transactions: [
             {
                 type: mongoose.Schema.Types.ObjectId,

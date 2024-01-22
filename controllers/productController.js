@@ -9,6 +9,7 @@ export const createProduct = async (req, res, next) => {
         const {
             type,
             category,
+            subCategory,
             canBeTradedFor,
             title,
             description,
@@ -16,21 +17,28 @@ export const createProduct = async (req, res, next) => {
             color,
             pictures,
         } = req.body;
-        if (!canBeTradedFor || !title || !description || !estimatedValue) {
+        if (
+            !type ||
+            !canBeTradedFor ||
+            !title ||
+            !description ||
+            !estimatedValue ||
+            !category ||
+            !subCategory
+        ) {
             res.status(STATUS_CODES.VALIDATION_ERROR);
-            throw new Error(
-                "Must include title, description, estimated value and items that can be traded for"
-            );
+            throw new Error("All Fields are Required");
         }
 
         const product = new Product(req.body);
         product.currentOwner = req.user._id;
         if (req.body.pictures) product.pictures = pictures.split(",");
         if (req.body.canBeTradedFor)
-            product.canBeTradedFor = canBeTradedFor.split(",");
+            product.canBeTradedFor = canBeTradedFor.toLowerCase().split(",");
         await product.save();
-        req.user.products.push(product);
-        await req.user.save();
+        // remove user products array
+        // req.user.products.push(product);
+        // await req.user.save();
         res.status(STATUS_CODES.CREATED).send(product);
     } catch (error) {
         next(error);
@@ -90,11 +98,12 @@ export const getProduct = async (req, res, next) => {
 //@access private
 export const getAllMyProducts = async (req, res, next) => {
     try {
-        if (!req.user.products.length) {
+        const myProducts = await Product.find({ currentOwner: req.user._id });
+        if (myProducts.length === 0) {
             res.status(STATUS_CODES.NOT_FOUND);
             throw new Error("You didn't add any products of your own yet");
         }
-        res.send(req.user.products);
+        res.send(myProducts);
     } catch (error) {
         next(error);
     }
@@ -119,10 +128,7 @@ export const removeProduct = async (req, res, next) => {
             res.status(STATUS_CODES.FORBIDDEN);
             throw new Error("You are not authorized to remove this item");
         }
-        req.user.products = req.user.products.filter(
-            (product) => !product._id.equals(productId)
-        );
-        await req.user.save();
+
         const deletedProduct = await Product.deleteOne({ _id: productId });
         res.send([deletedProduct, req.user]);
     } catch (error) {
@@ -140,6 +146,7 @@ export const updateProduct = async (req, res, next) => {
             res.status(STATUS_CODES.VALIDATION_ERROR);
             throw new Error("Must Provide Product ID");
         }
+
         const product = await Product.findOneAndUpdate(
             {
                 _id: productId,
@@ -158,30 +165,37 @@ export const updateProduct = async (req, res, next) => {
             product.pictures = req.body?.pictures.split(",");
         }
         if (req.body.canBeTradedFor) {
-            product.canBeTradedFor = req.body?.canBeTradedFor.split(",");
+            product.canBeTradedFor = req.body?.canBeTradedFor
+                .toLowerCase()
+                .split(",");
         }
+        await product.save();
 
-        req.user.save();
         res.send({ product, user: req.user });
     } catch (error) {
         next(error);
     }
 };
 
-//@desc Search for products by title
+//@desc Search for products
 //@route GET /api/products/search/by
 //@access private
 export const searchProducts = async (req, res, next) => {
     try {
-        const searchQuery = req.query.searchQuery;
+        const searchQuery = req.query.searchQuery.toLowerCase();
         const products = await Product.find();
+        // console.log(searchQuery);
+        // console.log(products[0].canBeTradedFor);
+        // console.log(products[0].canBeTradedFor.includes(searchQuery));
+
         const filteredProducts = products.filter(
             (product) =>
-                product.title.includes(searchQuery) ||
-                product.description.includes(searchQuery) ||
+                product.title.toLowerCase().includes(searchQuery) ||
+                product.description.toLowerCase().includes(searchQuery) ||
                 product.canBeTradedFor.includes(searchQuery) ||
-                product.category.includes(searchQuery) ||
-                product.color.includes(searchQuery)
+                product.category.toLowerCase().includes(searchQuery) ||
+                product.subCategory.toLowerCase().includes(searchQuery) ||
+                product.color.toLowerCase().includes(searchQuery)
         );
         res.send(filteredProducts);
     } catch (error) {

@@ -1,5 +1,6 @@
 import { STATUS_CODES } from "../constants/constants.js";
 import Offer from "../models/offerModel.js";
+import Product from "../models/productModel.js";
 import User from "../models/userModel.js";
 
 //@desc get an offer by id
@@ -80,20 +81,41 @@ export const updateOffer = async (req, res, next) => {
         }
         if (completed !== undefined) {
             if (completed) {
-                const sender = await User.findById(offer.sender._id);
-                const newSenderProducts = sender.products.filter((prod) =>
-                    senderProducts.some((soldProd) => soldProd._id !== prod._id)
-                );
-                sender.products = newSenderProducts.concat(receiverProducts);
-                await sender.save();
-                const receiver = await User.findById(offer.receiver._id);
-                const newReceiverProducts = receiver.products.filter((prod) =>
-                    receiverProducts.some(
-                        (soldProd) => soldProd._id !== prod._id
-                    )
-                );
-                receiver.products = newReceiverProducts.concat(senderProducts);
-                await receiver.save();
+                // const soldSenderProducts = senderProducts.map((prod) => {
+                //     return { ...prod, currentOwner: offer.receiver._id };
+                // });
+                // const soldReceiverProducts = receiverProducts.map((prod) => {
+                //     return { ...prod, currentOwner: offer.receiver._id };
+                // });
+
+                for (let prod of receiverProducts) {
+                    const newProduct = await Product.findById(prod._id);
+                    newProduct.currentOwner = offer.sender._id;
+                    await newProduct.save();
+                }
+
+                for (let prod of senderProducts) {
+                    const newProduct = await Product.findById(prod._id);
+                    newProduct.currentOwner = offer.receiver._id;
+                    await newProduct.save();
+                }
+
+                // const sender = await User.findById(offer.sender._id);
+                // const newSenderProducts = sender.products.filter(
+                //     (prod) => !senderProducts.includes(prod)
+                // );
+                // sender.products = newSenderProducts.concat(
+                //     updatedOwnerOfReceiverProducts
+                // );
+                // await sender.save();
+                // const receiver = await User.findById(offer.receiver._id);
+                // const newReceiverProducts = receiver.products.filter(
+                //     (prod) => !receiverProducts.includes(prod)
+                // );
+                // receiver.products = newReceiverProducts.concat(
+                //     updatedOwnerOfSenderProducts
+                // );
+                // await receiver.save();
             }
         }
         res.send(offer);
@@ -102,14 +124,16 @@ export const updateOffer = async (req, res, next) => {
     }
 };
 
-//@desc get an my offers
-//@route GET /api/offers/:offerId
+//@desc get my offers
+//@route GET /api/offers/my-offers
 //@access private
 export const getMyOffers = async (req, res, next) => {
     try {
         const offers = await Offer.find({
             $or: [{ sender: req.user._id }, { receiver: req.user._id }],
-        }).populate("sender receiver");
+        })
+            .populate("sender receiver")
+            .sort({ updatedAt: -1 });
 
         if (!offers) {
             res.status(STATUS_CODES.NOT_FOUND);

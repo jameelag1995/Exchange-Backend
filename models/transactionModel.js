@@ -22,6 +22,10 @@ const transactionSchema = mongoose.Schema(
                 ref: "Products",
             },
         ],
+        status: {
+            type: String,
+            enum: ["Accepted", "Rejected"],
+        },
     },
     {
         timestamps: true,

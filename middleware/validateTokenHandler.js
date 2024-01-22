@@ -12,9 +12,7 @@ export const validateToken = async (req, res, next) => {
             const user = await User.findOne({
                 _id: decoded._id,
                 "tokens.token": token,
-            })
-                .select("-password")
-                .populate("products");
+            }).select("-password");
 
             if (!token || !user) {
                 res.status(STATUS_CODES.UNAUTHORIZED);
