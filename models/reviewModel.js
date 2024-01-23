@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 
 const reviewSchema = mongoose.Schema(
     {
-        writer: {
+        sender: {
             type: mongoose.Schema.Types.ObjectId,
             ref: "Users",
         },
@@ -19,6 +19,10 @@ const reviewSchema = mongoose.Schema(
             min: 1,
             max: 5,
             required: [true, "Must provide trade rating"],
+        },
+        offer: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Offers",
         },
     },
     {

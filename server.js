@@ -6,6 +6,7 @@ import { errorHandler } from "./middleware/errorHandler.js";
 import userRouter from "./routes/user.routes.js";
 import productRouter from "./routes/product.routes.js";
 import offerRouter from "./routes/offer.routes.js";
+import reviewRouter from "./routes/review.routes.js";
 dotenv.config();
 
 const app = express();
@@ -23,6 +24,8 @@ app.use("/api/v1/exchange/users", userRouter);
 app.use("/api/v1/exchange/products", productRouter);
 // offer routes
 app.use("/api/v1/exchange/offers", offerRouter);
+// review routes
+app.use("/api/v1/exchange/reviews", reviewRouter);
 
 // error handler middleware
 app.use(errorHandler);
