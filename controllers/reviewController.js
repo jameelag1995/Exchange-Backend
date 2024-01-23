@@ -30,7 +30,7 @@ export const createReview = async (req, res, next) => {
 };
 
 //@desc Get user reviews by id
-//@route GET /api/reviews/delete
+//@route GET /api/reviews/:userId
 //@access private
 export const getReviews = async (req, res, next) => {
     try {
@@ -39,7 +39,9 @@ export const getReviews = async (req, res, next) => {
             res.status(STATUS_CODES.VALIDATION_ERROR);
             throw new Error("Must Provide User ID");
         }
-        const reviews = await Review.find({ receiver: userId });
+        const reviews = await Review.find({ receiver: userId })
+            .populate("receiver sender")
+            .sort({ createdAt: -1 });
         res.status(STATUS_CODES.CREATED).send(reviews);
     } catch (error) {
         next(error);
@@ -107,7 +109,8 @@ export const getMyReviews = async (req, res, next) => {
             res.status(STATUS_CODES.VALIDATION_ERROR);
             throw new Error("Must Provide User ID");
         }
-        const reviews = await Review.find().populate("receiver");
+        const reviews = await Review.find().populate("receiver sender");
+
         const filteredReviews = reviews.filter((review) =>
             review.receiver.displayName.includes(name)
         );

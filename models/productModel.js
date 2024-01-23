@@ -41,6 +41,10 @@ const productSchema = mongoose.Schema(
         pictures: {
             type: [String],
         },
+        location: {
+            type: String,
+            required: true,
+        },
         currentOwner: {
             type: mongoose.Schema.Types.ObjectId,
             ref: "Users",

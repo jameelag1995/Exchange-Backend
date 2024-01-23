@@ -15,6 +15,7 @@ export const createProduct = async (req, res, next) => {
             description,
             estimatedValue,
             color,
+            location,
             pictures,
         } = req.body;
         if (
@@ -24,6 +25,7 @@ export const createProduct = async (req, res, next) => {
             !description ||
             !estimatedValue ||
             !category ||
+            !location ||
             !subCategory
         ) {
             res.status(STATUS_CODES.VALIDATION_ERROR);
@@ -98,7 +100,9 @@ export const getProduct = async (req, res, next) => {
 //@access private
 export const getAllMyProducts = async (req, res, next) => {
     try {
-        const myProducts = await Product.find({ currentOwner: req.user._id });
+        const myProducts = await Product.find({
+            currentOwner: req.user._id,
+        }).populate("currentOwner");
         if (myProducts.length === 0) {
             res.status(STATUS_CODES.NOT_FOUND);
             throw new Error("You didn't add any products of your own yet");

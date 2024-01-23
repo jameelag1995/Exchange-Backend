@@ -134,6 +134,27 @@ export const logoutAll = async (req, res, next) => {
     }
 };
 
+//@desc Get a user by id
+//@route GET /api/users/:id
+//@access public
+export const getUserById = async (req, res, next) => {
+    try {
+        const userId = req.params.userId;
+        if (!userId) {
+            res.status(STATUS_CODES.VALIDATION_ERROR);
+            throw new Error("Must Provide User ID");
+        }
+        const user = await User.findById(userId).select("-password");
+        if (!user) {
+            res.status(STATUS_CODES.NOT_FOUND);
+            throw new Error("No Such User");
+        }
+        res.send(user);
+    } catch (error) {
+        next(error);
+    }
+};
+
 // //@desc Register a user
 // //@route POST /api/users/register
 // //@access public
