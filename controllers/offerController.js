@@ -20,6 +20,19 @@ export const getOffer = async (req, res, next) => {
             res.status(STATUS_CODES.NOT_FOUND);
             throw new Error("No Such Offer");
         }
+        // if (
+        //     !senderProducts.every((prod) =>
+        //         prod.currentOwner.equals(sender._id)
+        //     ) ||
+        //     !receiverProducts.every((prod) =>
+        //         prod.currentOwner.equals(receiver._id)
+        //     )
+        // ) {
+        //     res.status(STATUS_CODES.VALIDATION_ERROR);
+        //     throw new Error(
+        //         "One or more of the products is not available anymore"
+        //     );
+        // }
         res.send(offer);
     } catch (error) {
         next(error);
