@@ -196,7 +196,7 @@ export const searchProducts = async (req, res, next) => {
             (product) =>
                 product.title.toLowerCase().includes(searchQuery) ||
                 product.description.toLowerCase().includes(searchQuery) ||
-                product.canBeTradedFor.includes(searchQuery) ||
+                product.canBeTradedFor.toLowerCase().includes(searchQuery) ||
                 product.category.toLowerCase().includes(searchQuery) ||
                 product.subCategory.toLowerCase().includes(searchQuery) ||
                 product.color.toLowerCase().includes(searchQuery)

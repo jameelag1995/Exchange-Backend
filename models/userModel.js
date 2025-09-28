@@ -1,5 +1,72 @@
 import mongoose from "mongoose";
 import jwt from "jsonwebtoken";
+
+/**
+ * @swagger
+ * components:
+ *   schemas:
+ *     User:
+ *       type: object
+ *       required:
+ *         - displayName
+ *         - email
+ *         - password
+ *       properties:
+ *         _id:
+ *           type: string
+ *           description: The auto-generated id of the user
+ *           example: "507f1f77bcf86cd799439011"
+ *         displayName:
+ *           type: string
+ *           description: The user's display name
+ *           minLength: 2
+ *           example: "John Doe"
+ *         email:
+ *           type: string
+ *           format: email
+ *           description: The user's email address
+ *           example: "john@example.com"
+ *         password:
+ *           type: string
+ *           description: The user's hashed password
+ *           minLength: 8
+ *         profilePicture:
+ *           type: string
+ *           description: URL to the user's profile picture
+ *           example: "https://example.com/profile.jpg"
+ *         reviews:
+ *           type: array
+ *           description: Array of review IDs associated with the user
+ *           items:
+ *             type: string
+ *           example: ["507f1f77bcf86cd799439012", "507f1f77bcf86cd799439013"]
+ *         transactions:
+ *           type: array
+ *           description: Array of transaction IDs associated with the user
+ *           items:
+ *             type: string
+ *           example: ["507f1f77bcf86cd799439014", "507f1f77bcf86cd799439015"]
+ *         tokens:
+ *           type: array
+ *           description: Array of active JWT tokens for the user
+ *           items:
+ *             type: object
+ *             properties:
+ *               token:
+ *                 type: string
+ *                 description: JWT token string
+ *         createdAt:
+ *           type: string
+ *           format: date-time
+ *           description: The date the user was created
+ *           example: "2023-01-01T00:00:00.000Z"
+ *         updatedAt:
+ *           type: string
+ *           format: date-time
+ *           description: The date the user was last updated
+ *           example: "2023-01-01T00:00:00.000Z"
+ */
+
 const userSchema = mongoose.Schema(
     {
         displayName: {
